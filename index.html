@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    <title>AR Optical Fibre - rjkilpatrick</title>
+    <meta name="description" content="AR Optical Fibre Simulation">
+    <meta name="author" content="John Kilpatrick" />
+    
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="AR Optical Fibre Simulation">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rjkilpatrick.github.io/ar-fibre">
+    <meta property="og:description" content="A simple HTML5 Template for new projects.">
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@rjkilpatrick1" />
+    <meta name="twitter:title" content="AR Optical Fibre Simulation" />
+
+    <meta name="twitter:creator" content="rjkilpatrick1" />
+
+    <script src="https://unpkg.com/aframe@latest/dist/aframe-master.js"></script>
+    <!-- Marker based AR -->
+    <script src="https://unpkg.com/@ar-js-org/ar.js@latest"></script>
+</head>
+
+<body style="margin : 0px; overflow: hidden;">
+    <a-scene embedded arjs vr-mode-ui="enabled: false">
+        <a-assets>
+            <img id="modes" src="assets/img/mode_texture.png"></img>
+        </a-assets>
+        <a-marker preset="hiro">
+            <!-- Cover plane with markers -->
+            <a-plane position="0 0 0" color="white" rotation="-90 0 0"></a-plane>
+
+            <!-- Fibre cylinder -->
+            <a-cylinder position="0 0.5 0" color="white" height="1" radius="0.5" material="side: double; opacity: 0.5;"
+                open-ended="true" rotation="0 0 0"></a-cylinder>
+
+            <!-- Fibre-mode plane -->
+            <a-plane position="0 0 0" animation="property: position; to: 0 1 0; dur: 3000; easing: linear; loop: true"
+                material="repeat: 0.08333333333 0.08333333333" rotation="-90 0 0" src="#modes"></a-plane>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+</body>
+
+</html>
