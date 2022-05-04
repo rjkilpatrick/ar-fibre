@@ -64,4 +64,41 @@
         break;
     }
   });
+
+  scene.addEventListener('touchstart', onTouchStart);
+  scene.addEventListener('touchend', onTouchEnd);
+
+  // TODO: Refactor into touch handling standalone file
+  // TODO: Support PointerEvents API
+  const tolerance = 20; // TODO: Tweak, possibly divide by height/width idk
+  let initialX;
+  let initialY;
+
+  function onTouchStart(event) {
+    event.preventDefault(); // Don't "click"
+    initialX = event.changedTouches[0].screenX;
+    initialY = event.changedTouches[0].screenY;
+  }
+
+  function onTouchEnd(event) {
+    event.preventDefault();
+    // Return if initial positions undefined
+    if (initialX == undefined || initialY == undefined) {
+      return;
+    }
+
+    const deltaX = event.changedTouches[0].screenX - initialX;
+    const deltaY = event.changedTouches[0].screenY - initialY;
+
+    // Enforce horizontal
+    if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+      if (deltaX >= tolerance) {
+        // Right
+        changeMode(modeIndex - 1);
+      } else if (deltaX <= 0) {
+        // Left
+        changeMode(modeIndex + 1);
+      }
+    }
+  }
 }
