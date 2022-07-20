@@ -1,4 +1,19 @@
 {
+  const vertexShader = await (await fetch("/assets/shaders/fibre.vert.glsl")).text();
+
+  const fragmentShader = await (await fetch("/assets/shaders/fibre.frag.glsl")).text();
+
+  AFRAME.registerShader("fibre-mode", {
+    schema: {
+      u_modeAtlasTexture: { type: "map", is: "uniform" },
+      u_repeat: { type: "vec2", is: "uniform" },
+      u_uvOffset: { type: "vec2", is: "uniform" },
+      u_time: { type: "time", is: "uniform" },
+    },
+    vertexShader,
+    fragmentShader,
+  });
+
   // Get (pre-calculated) fibre parameters
   const fibreParameters = await fetch("assets/json/fibre_parameters.json")
     .then((response) => response.json())
@@ -65,8 +80,8 @@
     }
   });
 
-  scene.addEventListener('touchstart', onTouchStart);
-  scene.addEventListener('touchend', onTouchEnd);
+  scene.addEventListener("touchstart", onTouchStart);
+  scene.addEventListener("touchend", onTouchEnd);
 
   // TODO: Refactor into touch handling standalone file
   // TODO: Support PointerEvents API
