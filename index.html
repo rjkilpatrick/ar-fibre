@@ -22,11 +22,10 @@
     <meta name="twitter:creator" content="rjkilpatrick1" />
 
     <script src="https://unpkg.com/aframe@1.3.0/dist/aframe-master.min.js"></script>
+    <script type="module" src="js/main.module.js"></script>
 
     <!-- Marker based AR -->
     <script src="https://unpkg.com/@ar-js-org/ar.js@3.4.0/aframe/build/aframe-ar.js"></script>
-    <script type="module" src="js/main.module.js">
-    </script>
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
@@ -40,7 +39,7 @@
                 open-ended="true" rotation="0 0 0"></a-cylinder>
 
             <!-- Fibre-mode plane -->
-            <a-plane id="fibre-plane" position="0 0 0"
+            <a-plane update-shader id="fibre-plane" position="0 0 0"
                 animation="property: position; to: 0 1 0; dur: 3000; easing: linear; loop: true" material="shader:fibre-mode;
                 u_modeAtlasTexture: #modes;
                 u_repeat: 0.08333333333 0.08333333333;

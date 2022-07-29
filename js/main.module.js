@@ -14,6 +14,12 @@
     fragmentShader,
   });
 
+  AFRAME.registerComponent('update-shader', {
+    init: () => {
+      changeMode(0);
+    }
+  })
+
   // Get (pre-calculated) fibre parameters
   const fibreParameters = await fetch("assets/json/fibre_parameters.json")
     .then((response) => response.json())
@@ -59,7 +65,7 @@
   }
 
   // Start off at mode 0
-  changeMode(0);
+  // changeMode(0);
 
   // Add event listeners
   const scene = document.querySelector("a-scene");
