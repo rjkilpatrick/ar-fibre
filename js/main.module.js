@@ -1,7 +1,7 @@
 {
-  const vertexShader = await (await fetch("/assets/shaders/fibre.vert.glsl")).text();
+  const vertexShader = await (await fetch("assets/shaders/fibre.vert.glsl")).text();
 
-  const fragmentShader = await (await fetch("/assets/shaders/fibre.frag.glsl")).text();
+  const fragmentShader = await (await fetch("assets/shaders/fibre.frag.glsl")).text();
 
   AFRAME.registerShader("fibre-mode", {
     schema: {
