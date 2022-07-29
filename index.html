@@ -35,8 +35,9 @@
         </a-assets>
         <a-marker preset="hiro">
             <!-- Fibre cylinder -->
-            <a-cylinder position="0 0.5 0" color="white" height="1" radius="0.5" material="side: double; opacity: 0.2;"
-                open-ended="true" rotation="0 0 0"></a-cylinder>
+            <a-cylinder position="0 0.5 0" color="white" height="1" radius="0.5"
+                material="side: double; opacity: 0.2; transparent: true;" open-ended="true" rotation="0 0 0">
+            </a-cylinder>
 
             <!-- Fibre-mode plane -->
             <a-plane update-shader id="fibre-plane" position="0 0 0"
