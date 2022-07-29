@@ -1,7 +1,13 @@
 {
-  const vertexShader = await (await fetch("assets/shaders/fibre.vert.glsl")).text();
+  const vertexShader = await fetch("assets/shaders/fibre.vert.glsl")
+    .then((response) => response.text())
+    .catch((error) => console.error(error));
 
-  const fragmentShader = await (await fetch("assets/shaders/fibre.frag.glsl")).text();
+  const fragmentShader = await fetch("assets/shaders/fibre.frag.glsl")
+    .then((response) => response.text())
+    .catch((error) => console.error(error));
+
+  const initialModeIndex = 0;
 
   AFRAME.registerShader("fibre-mode", {
     schema: {
@@ -14,58 +20,88 @@
     fragmentShader,
   });
 
-  AFRAME.registerComponent('update-shader', {
-    init: () => {
-      changeMode(0);
-    }
-  })
+  AFRAME.registerComponent("update-shader", {
+    schema: {
+      modeIndex: { type: "int", default: initialModeIndex },
+      atlasWidth: { type: "number", default: 1.0 },
+      atlasHeight: { type: "number", default: 1.0 },
+    },
+    init() {
+      // Assumed won't change
+      this.atlasWidth = this.data.atlasWidth;
+      this.atlasHeight = this.data.atlasHeight;
+
+      this.el.setAttribute("material", {
+        shader: "fibre-mode",
+        u_modeAtlasTexture: "#modes",
+        u_uvOffset: { x: 0.0, y: 0.0 },
+        transparent: true,
+      });
+      this.el.setAttribute("material", "u_repeat", {
+        x: 1.0 / this.atlasWidth,
+        y: 1.0 / this.atlasHeight,
+      });
+    },
+
+    update() {
+      // Note, called after init
+      const { modeIndex } = this.data;
+
+      // Update texture
+      const x = (modeIndex % this.atlasWidth) / this.atlasWidth;
+      const y =
+        (this.atlasWidth - 1.0 - Math.floor(modeIndex / this.atlasWidth)) /
+        this.atlasHeight;
+
+      this.el.setAttribute("material", "u_uvOffset", { x, y });
+    },
+  });
 
   // Get (pre-calculated) fibre parameters
   const fibreParameters = await fetch("assets/json/fibre_parameters.json")
     .then((response) => response.json())
     .catch((error) => console.error(error));
 
-  // Note that this is technically the number of modes with positive ell, but
-  // I doubt someone will scroll through all of the modes and wonder where the
-  // negative ones are.
   const numModes = fibreParameters.core_wavevector.length;
 
-  let azimuthalIndex = 0;
-  let radialIndex = 0;
+  AFRAME.registerComponent("update-text", {
+    schema: {
+      modeIndex: { type: "int", default: initialModeIndex },
+    },
+    init: function () {
+      // Note that this is technically the number of modes with positive ell, but
+      // I doubt someone will scroll through all of the modes and wonder where the
+      // negative ones are.
+      this.numModes = fibreParameters.core_wavevector.length;
+    },
 
-  // From texture
-  const atlasWidth = 12;
-  const atlasHeight = 12;
+    update: function () {
+      // Note, called after init
+      const { modeIndex } = this.data;
+
+      // We're ignoring the modes with a negative azimuthal index for convenience
+      const azimuthalIndex = fibreParameters.azimuthal_indices[modeIndex];
+      const radialIndex = fibreParameters.radial_indices[modeIndex];
+
+      this.el.setAttribute(
+        "value",
+        `ell = ${azimuthalIndex}, p = ${radialIndex}`
+      );
+    },
+  });
 
   let modeIndex = 0;
 
-  const fibrePlane = document.querySelector("#fibre-plane");
-  const modeText = document.querySelector("#mode-text");
-
   function changeMode(index) {
-    // Clip to number of modes
     modeIndex = ((index % numModes) + numModes) % numModes; // Positive modulo
-
-    // We're ignoring the modes with a negative azimuthal index for convenience
-    azimuthalIndex = fibreParameters.azimuthal_indices[modeIndex];
-    radialIndex = fibreParameters.radial_indices[modeIndex];
-
-    // Set ell, p as text in the scene.
-    modeText.setAttribute(
-      "value",
-      `ell = ${azimuthalIndex}, p = ${radialIndex}`
-    );
-
-    // Convert the linear index of the mode into 2D texture co-ordinates
-    const offsetX = modeIndex % atlasWidth;
-    const offsetY = atlasWidth - 1.0 - Math.floor(modeIndex / atlasWidth);
-    fibrePlane.object3DMap.mesh.material.uniforms.u_uvOffset.value =
-      new THREE.Vector2(offsetX / atlasWidth, offsetY / atlasHeight);
-    fibrePlane.object3DMap.mesh.material.needsUpdate = true;
+    for (const attribute of ["update-text", "update-shader"]) {
+      document
+        .querySelector(`[${attribute}]`)
+        .setAttribute(attribute, "modeIndex", modeIndex);
+    }
   }
 
-  // Start off at mode 0
-  // changeMode(0);
+  changeMode(0);
 
   // Add event listeners
   const scene = document.querySelector("a-scene");
@@ -73,8 +109,8 @@
     changeMode(modeIndex + 1);
   });
 
-  document.addEventListener("keydown", (event) => {
-    switch (event.key) {
+  document.addEventListener("keydown", (e) => {
+    switch (e.key) {
       case "ArrowLeft":
       case "ArrowUp":
         changeMode(modeIndex - 1);
@@ -91,25 +127,25 @@
 
   // TODO: Refactor into touch handling standalone file
   // TODO: Support PointerEvents API
-  const tolerance = 20; // TODO: Tweak, possibly divide by height/width idk
+  const tolerance = 44;
   let initialX;
   let initialY;
 
-  function onTouchStart(event) {
-    event.preventDefault(); // Don't "click"
-    initialX = event.changedTouches[0].screenX;
-    initialY = event.changedTouches[0].screenY;
+  function onTouchStart(e) {
+    e.preventDefault(); // Don't "click"
+    initialX = e.changedTouches[0].screenX;
+    initialY = e.changedTouches[0].screenY;
   }
 
-  function onTouchEnd(event) {
-    event.preventDefault();
+  function onTouchEnd(e) {
+    e.preventDefault();
     // Return if initial positions undefined
     if (initialX == undefined || initialY == undefined) {
       return;
     }
 
-    const deltaX = event.changedTouches[0].screenX - initialX;
-    const deltaY = event.changedTouches[0].screenY - initialY;
+    const deltaX = e.changedTouches[0].screenX - initialX;
+    const deltaY = e.changedTouches[0].screenY - initialY;
 
     // Enforce horizontal
     if (Math.abs(deltaX) >= Math.abs(deltaY)) {
@@ -117,6 +153,7 @@
         // Right
         changeMode(modeIndex - 1);
       } else if (deltaX <= 0) {
+        // Consider taps as 'left'
         // Left
         changeMode(modeIndex + 1);
       }

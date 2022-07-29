@@ -1,3 +1,5 @@
+precision mediump float; // or lowp
+
 uniform sampler2D u_modeAtlasTexture;
 uniform vec2 u_uvOffset;
 uniform vec2 u_repeat;
