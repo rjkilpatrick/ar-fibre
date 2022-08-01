@@ -34,9 +34,6 @@
             <img id="modes" src="assets/img/mode_texture.png"></img>
         </a-assets>
         <a-marker preset="hiro">
-            <!-- Background plane -->
-            <a-plane position="0 0 0" height="2" width="2" color="white" rotation="-90 0 0"></a-plane>
-
             <!-- Fibre cylinder -->
             <a-cylinder position="0 0.5 0" color="white" height="1" radius="0.5"
                 material="side: double; opacity: 0.2; transparent: true;" open-ended="true" rotation="0 0 0">
@@ -46,7 +43,7 @@
             <a-plane update-shader="modeIndex: 0; atlasWidth: 12; atlasHeight: 12" id="fibre-plane" position="0 0 0"
                 animation="property: position; to: 0 1 0; dur: 3000; easing: linear; loop: true" rotation="-90 0 0">
             </a-plane>
-            <a-text update-text="modeIndex: 0" text="" rotation="-90 0 0" position="0.5 0.05 -0.5" id="mode-text"
+            <a-text update-text="modeIndex: 0" text="" rotation="-90 0 0" position="0.5 0 -0.5" id="mode-text"
                 scale="0.5 0.5 0.5"></a-text>
         </a-marker>
         <a-entity camera></a-entity>
