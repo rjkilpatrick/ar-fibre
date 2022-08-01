@@ -70,14 +70,14 @@
     schema: {
       modeIndex: { type: "int", default: initialModeIndex },
     },
-    init: function () {
+    init() {
       // Note that this is technically the number of modes with positive ell, but
       // I doubt someone will scroll through all of the modes and wonder where the
       // negative ones are.
       this.numModes = fibreParameters.core_wavevector.length;
     },
 
-    update: function () {
+    update() {
       // Note, called after init
       const { modeIndex } = this.data;
 
