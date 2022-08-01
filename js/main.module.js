@@ -27,16 +27,16 @@
       atlasHeight: { type: "number", default: 1.0 },
     },
     init() {
-      // Assumed won't change
-      this.atlasWidth = this.data.atlasWidth;
-      this.atlasHeight = this.data.atlasHeight;
-
       this.el.setAttribute("material", {
         shader: "fibre-mode",
         u_modeAtlasTexture: "#modes",
         u_uvOffset: { x: 0.0, y: 0.0 },
         transparent: true,
       });
+
+      // Assumed won't change
+      this.atlasWidth = this.data.atlasWidth;
+      this.atlasHeight = this.data.atlasHeight;
       this.el.setAttribute("material", "u_repeat", {
         x: 1.0 / this.atlasWidth,
         y: 1.0 / this.atlasHeight,
@@ -55,6 +55,8 @@
 
       this.el.setAttribute("material", "u_uvOffset", { x, y });
     },
+
+    dependencies: ["fibre-mode"],
   });
 
   // Get (pre-calculated) fibre parameters

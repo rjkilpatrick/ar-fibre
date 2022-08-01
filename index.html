@@ -40,7 +40,7 @@
             </a-cylinder>
 
             <!-- Fibre-mode plane -->
-            <a-plane update-shader="modeIndex: 0; atlasWidth: 12; atlasHeight: 12" id="fibre-plane" position="0 0 0"
+            <a-plane material="side: double; opacity: 0.2; transparent: true;" update-shader="modeIndex: 0; atlasWidth: 12; atlasHeight: 12" id="fibre-plane" position="0 0 0"
                 animation="property: position; to: 0 1 0; dur: 3000; easing: linear; loop: true" rotation="-90 0 0">
             </a-plane>
             <a-text update-text="modeIndex: 0" text="" rotation="-90 0 0" position="0.5 0 -0.5" id="mode-text" scale="0.5 0.5 0.5"></a-text>
